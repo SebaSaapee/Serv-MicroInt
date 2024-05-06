@@ -7,5 +7,6 @@ export class ServiceDTO{
     readonly descripcion: string;
     readonly precio: string;
     readonly contacto: string;
-    readonly fotos: string[]; 
+    //readonly fotos: string[];
+
 }

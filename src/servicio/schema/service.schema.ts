@@ -6,7 +6,8 @@ export const ServiceSchema = new mongoose.Schema(
     descripcion:{type:String, required:true},
     precio:{type:String, required:true},
     contacto:{type:String, required:true},
-    fotos: [{ type: String }],
+    //fotos: [{ type: String }],
+   // user_id: {type:String,required:true}
   
     },
     { timestamps: true}
