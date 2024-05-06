@@ -1,2 +1,2 @@
 
-export const PRODUCT = {name: 'product'};
+export const SERVICE = {name: 'service'};

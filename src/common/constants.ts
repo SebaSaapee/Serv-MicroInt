@@ -1,12 +1,12 @@
 export enum RabbitMQ{
-  ProductsQueue = 'products',
+  ServicesQueue = 'services',
   
 }
 
-export enum    ProductosMSG{
-  CREATE = 'CREATE_PRODUCT',
-  FIND_ALL =  'FIND_PRODUCTS',
-  FIND_ONE = 'FIND_PRODUCT',
-  UPDATE = 'UPDATE_PRODUCT',
-  DELETE = 'DELETE_PRODUCT',
+export enum    ServicesMSG{
+  CREATE = 'CREATE_SERVICES',
+  FIND_ALL =  'FIND_SERVICES',
+  FIND_ONE = 'FIND_SERVICE',
+  UPDATE = 'UPDATE_SERVICE',
+  DELETE = 'DELETE_SERVICE',
 }

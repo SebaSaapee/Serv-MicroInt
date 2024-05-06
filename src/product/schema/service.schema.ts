@@ -1,13 +1,15 @@
 import * as mongoose from 'mongoose';
 
-export const ProductSchema = new mongoose.Schema(
+export const ServiceSchema = new mongoose.Schema(
     {
     nombre: {type:String, required:true},
     descripcion:{type:String, required:true},
     precio:{type:String, required:true},
+    contacto:{type:String, required:true},
+    fotos: [{ type: String }],
   
     },
     { timestamps: true}
     )
-    ProductSchema.index({nombre:1},{unique:true})
+    ServiceSchema.index({nombre:1},{unique:true})
     
