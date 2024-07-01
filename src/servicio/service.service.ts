@@ -89,4 +89,9 @@ async getAvailableHours(serviceId: string, date: Date): Promise<string[]> {
       throw new Error(`Error al obtener los horarios disponibles: ${error.message}`);
     }
   }
+
+
+  async findTopRequested(): Promise<IService[]> {
+    return await this.model.find().sort({ contadorSolicitudes: -1 }).limit(2).exec();
+}
 }

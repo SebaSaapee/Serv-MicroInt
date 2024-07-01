@@ -13,5 +13,6 @@ export class ServiceDTO{
     readonly rating: number;
     
     
+    
 
 }

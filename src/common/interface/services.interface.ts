@@ -10,7 +10,7 @@ export interface IService extends Document {
   fotos: string[]; // Array de URLs de las fotos
   user_id: string;
   rating: number;
-  horariosDisponibles: string[];
+  contadorSolicitudes: number;
  
 }
 

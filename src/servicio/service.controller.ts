@@ -47,5 +47,8 @@ export class ServiceController {
         const { serviceId, date } = payload;
         return this.serviceService.getAvailableHours(serviceId, date);
     }
-    
+    @MessagePattern(ServicesMSG.FIND_TOP_REQUESTED)
+    async findTopRequested() {
+        return this.serviceService.findTopRequested();
+    }
 }
