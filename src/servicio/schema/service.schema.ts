@@ -11,6 +11,7 @@ export const ServiceSchema = new mongoose.Schema(
         fotos: [{ type: String }],
         rating: { type: Number, required: true },
         user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        horariosDisponibles:[{type:String}],
    
   },
   { timestamps: true }

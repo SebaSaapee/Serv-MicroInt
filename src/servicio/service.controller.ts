@@ -42,6 +42,10 @@ export class ServiceController {
         return this.serviceService.delete(id);
     }
 
-   
-
+    @MessagePattern(ServicesMSG.GET_AVAILABLE_HOURS)
+    async getAvailableHours(@Payload() payload: { serviceId: string, date: Date }) {
+        const { serviceId, date } = payload;
+        return this.serviceService.getAvailableHours(serviceId, date);
+    }
+    
 }
