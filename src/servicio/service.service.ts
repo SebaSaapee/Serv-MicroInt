@@ -52,25 +52,40 @@ async delete(id:string){
     return {status:HttpStatus.OK,msg:'deleted'}
 }
 
-async getAvailableHours(serviceId: string, date: Date): Promise<any[]> {
-    // Simulación de datos, debes reemplazar con tu lógica real
-    const todosLosHorarios = ['09:00', '10:00', '11:00', '12:00', '13:00']; // Ejemplo de todos los horarios disponibles
-    
-    // Obtener todas las postulaciones para este servicio en la fecha solicitada (simulación vacía)
-    const postulaciones = [];
+async getAvailableHours(serviceId: string, date: Date): Promise<string[]> {
+    try {
+      // Buscar el servicio por su ID
+      
+      const service = await this.model.findById(serviceId).exec();
+      if (!service) {
+        throw new Error('Servicio no encontrado');
+      }
+      
+      // Obtener todas las postulaciones para este servicio en la fecha solicitada
+      const postulaciones = await this.postulacionModel.find({
+        
+        servicioId: serviceId,
+        fechaSolicitada: { $eq: date }, // Asegúrate de que la fecha se compare correctamente
+      }).exec();
+      console.log(serviceId)
+      // Verificar que se obtengan las postulaciones correctamente
+      console.log('Postulaciones encontradas:', postulaciones);
 
-    const horariosOcupados = postulaciones.map(postulacion => postulacion.horarioSolicitado);
-    
-    // Filtrar horarios disponibles y preparar la lista de objetos
-    const horariosDisponibles = todosLosHorarios
-        .filter(horario => !horariosOcupados.includes(horario))
-        .map(horario => ({
-           
-            horario
-            // Otras propiedades según sea necesario
-        }));
+      // Obtener los horarios ocupados de las postulaciones existentes
+      const horariosOcupados = postulaciones.map(postulacion => postulacion.horarioSolicitado);
+      console.log('Horarios ocupados:', horariosOcupados);
 
-    return horariosDisponibles;
-}
+      // Todos los horarios disponibles (ejemplo)
+      const todosLosHorarios = ['09:00', '10:00', '11:00', '12:00', '13:00']; // Ejemplo de todos los horarios disponibles
+      
+      // Filtrar los horarios disponibles
+      const horariosDisponibles = todosLosHorarios.filter(horario => !horariosOcupados.includes(horario));
 
+      console.log('Horarios disponibles:', horariosDisponibles);
+
+      return horariosDisponibles;
+    } catch (error) {
+      throw new Error(`Error al obtener los horarios disponibles: ${error.message}`);
+    }
+  }
 }
