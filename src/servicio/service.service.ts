@@ -54,6 +54,7 @@ async delete(id:string){
 
 async getAvailableHours(serviceId: string, date: Date): Promise<string[]> {
     try {
+        console.log(date)
       // Buscar el servicio por su ID
       
       const service = await this.model.findById(serviceId).exec();

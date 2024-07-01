@@ -11,7 +11,7 @@ export class ServiceDTO{
     readonly fotos: string[];
     readonly user_id: string;
     readonly rating: number;
-    readonly horariosDisponibles: string[];
+    
     
 
 }
