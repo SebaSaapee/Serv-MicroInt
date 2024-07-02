@@ -11,8 +11,13 @@ export class ServiceDTO{
     readonly fotos: string[];
     readonly user_id: string;
     readonly rating: number;
+    readonly reviews: ReviewDTO[]
     
-    
-    
+}
 
+export class ReviewDTO {
+    readonly userId: string;
+    readonly rating: number;
+    readonly comentario: string;
+    readonly fecha: Date;
 }

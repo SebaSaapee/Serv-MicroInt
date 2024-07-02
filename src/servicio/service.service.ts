@@ -2,7 +2,7 @@ import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { POSTULACION, SERVICE, USER} from 'src/common/models/models';
-import { ServiceDTO } from './dto/service.dto';
+import { ReviewDTO, ServiceDTO } from './dto/service.dto';
 import { IService } from 'src/common/interface/services.interface';
 
 import { IUser } from 'src/common/interface/user.interface';
@@ -43,10 +43,11 @@ async findAll(): Promise<IService[]>{
 async findOne(id:string): Promise<IService>{
     return await this.model.findById(id);
 }
-async update(id:string, serviceDTO:ServiceDTO): Promise<IService>{
-    const service = serviceDTO;
-    return await this.model.findByIdAndUpdate(id, service, {new: true});
+
+async update(id: string, serviceDTO: ServiceDTO): Promise<IService> {
+  return await this.model.findByIdAndUpdate(id, serviceDTO, { new: true });
 }
+
 async delete(id:string){
     await this.model.findByIdAndDelete(id);
     return {status:HttpStatus.OK,msg:'deleted'}
@@ -184,4 +185,43 @@ async getAnnualSales(servicioId: string): Promise<{ year: number, total: number 
 async getTopServices(user_id: string): Promise<IService[]> {
   return await this.model.find({ user_id }).sort({ contadorSolicitudes: -1 }).limit(2).exec();
 }
+
+
+
+
+async addReview(serviceId: string, reviewDTO: ReviewDTO, usuarioId: string): Promise<IService> {
+  const service = await this.model.findById(serviceId);
+
+  if (!service) {
+      throw new Error('Servicio no encontrado');
+  }
+
+  const newReview = {
+      userId: usuarioId,
+      rating: reviewDTO.rating,
+      comentario: reviewDTO.comentario,
+      fecha: new Date(),
+  };
+
+  service.reviews.push(newReview);
+  service.rating = this.calculateAverageRating(service.reviews);
+
+  await service.save();
+
+  return service;
 }
+
+private calculateAverageRating(reviews: any[]): number {
+  if (reviews.length === 0) return 0;
+  const totalRatings = reviews.reduce((acc, review) => acc + review.rating, 0);
+  return totalRatings / reviews.length;
+}
+
+
+
+async findByUser(userId: string): Promise<IService[]> {
+  return await this.model.find({ user_id: userId });
+}
+
+}
+
