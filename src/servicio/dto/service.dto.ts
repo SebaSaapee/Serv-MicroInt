@@ -6,7 +6,7 @@ export class ServiceDTO{
     
     readonly nombre: string;
     readonly descripcion: string;
-    readonly precio: string;
+    readonly precio: number;
     readonly contacto: string;
     readonly fotos: string[];
     readonly user_id: string;

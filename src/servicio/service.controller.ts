@@ -51,4 +51,23 @@ export class ServiceController {
     async findTopRequested() {
         return this.serviceService.findTopRequested();
     }
+    @MessagePattern(ServicesMSG.GET_TOTAL_SALES)
+    async getTotalSales(@Payload() servicioId: string) {
+        return this.serviceService.getTotalSales(servicioId);
+    }
+
+    @MessagePattern(ServicesMSG.GET_MONTHLY_SALES)
+    async getMonthlySales(@Payload() servicioId: string) {
+        return this.serviceService.getMonthlySales(servicioId);
+    }
+
+    @MessagePattern(ServicesMSG.GET_ANNUAL_SALES)
+    async getAnnualSales(@Payload() servicioId: string) {
+        return this.serviceService.getAnnualSales(servicioId);
+    }
+
+    @MessagePattern(ServicesMSG.GET_TOP_SERVICES)
+    async getTopServices(@Payload() userId: string) {
+        return this.serviceService.getTopServices(userId);
+    }
 }

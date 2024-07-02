@@ -92,6 +92,96 @@ async getAvailableHours(serviceId: string, date: Date): Promise<string[]> {
 
 
   async findTopRequested(): Promise<IService[]> {
-    return await this.model.find().sort({ contadorSolicitudes: -1 }).limit(2).exec();
+    return await this.model.find().sort({ contadorSolicitudes: -1 }).limit(3).exec();
+}
+
+
+ async getTotalSales(servicioId: string): Promise<number> {
+    try {
+      const postulaciones = await this.postulacionModel.find({ servicioId: servicioId }).exec();
+
+      let totalSales = 0;
+
+      for (const postulacion of postulaciones) {
+        const service = await this.model.findById(postulacion.servicioId).exec();
+        if (service) {
+          totalSales += service.precio;
+        }
+      }
+
+      return totalSales;
+    } catch (error) {
+      throw new Error(`Error al calcular las ventas totales: ${error.message}`);
+    }
+  }
+
+
+  async getMonthlySales(servicioId: string): Promise<{ month: number, total: number }[]> {
+    try {
+        // Buscar todas las postulaciones para el servicio dado
+        const postulaciones = await this.postulacionModel.find({ servicioId: servicioId }).exec();
+
+        // Crear un objeto para almacenar las ventas mensuales
+        const monthlySales = {};
+
+        for (const postulacion of postulaciones) {
+            const service = await this.model.findById(postulacion.servicioId).exec();
+            if (service) {
+                const month = new Date(postulacion.fechaSolicitada).getMonth() + 1; // Obtener el mes de la fecha solicitada (getMonth() es 0-indexado)
+                
+                if (!monthlySales[month]) {
+                    monthlySales[month] = 0;
+                }
+
+                // Sumar el precio del servicio a la venta mensual correspondiente
+                monthlySales[month] += service.precio;
+            }
+        }
+        // Convertir el objeto de ventas mensuales en un array
+        const monthlySalesArray = Object.keys(monthlySales).map(month => ({
+            month: parseInt(month, 10),
+            total: monthlySales[month]
+        }));
+
+        return monthlySalesArray;
+    } catch (error) {
+        throw new Error(`Error al calcular las ventas mensuales: ${error.message}`);
+    }
+}
+
+async getAnnualSales(servicioId: string): Promise<{ year: number, total: number }[]> {
+  try {
+      // Buscar todas las postulaciones para el servicio dado
+      const postulaciones = await this.postulacionModel.find({ servicioId }).exec();
+
+      // Crear un objeto para almacenar las ventas anuales
+      const annualSales = {};
+
+      for (const postulacion of postulaciones) {
+          // Obtener el servicio asociado a la postulación
+          const service = await this.model.findById(postulacion.servicioId).exec();
+          if (service) {
+              const year = new Date(postulacion.fechaSolicitada).getFullYear(); // Obtener el año de la fecha solicitada
+
+              if (!annualSales[year]) {
+                  annualSales[year] = 0;
+              }
+
+              annualSales[year] += service.precio;
+          }
+      }
+
+      // Convertir el objeto annualSales en un array de objetos
+      return Object.keys(annualSales).map(year => ({
+          year: parseInt(year, 10),
+          total: annualSales[year]
+      }));
+  } catch (error) {
+      throw new Error(`Error al calcular las ventas anuales: ${error.message}`);
+  }
+}
+
+async getTopServices(user_id: string): Promise<IService[]> {
+  return await this.model.find({ user_id }).sort({ contadorSolicitudes: -1 }).limit(2).exec();
 }
 }
