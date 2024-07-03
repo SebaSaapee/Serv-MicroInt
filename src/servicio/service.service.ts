@@ -267,31 +267,26 @@ async getChats(serviceId: string): Promise<ChatDTO[]> {
 
   return service.chats;
 }
-
-async updateChat(serviceId: string, chatId: string, chatDTO: ChatDTO): Promise<ChatDTO[]> {
-  try {
-    const service = await this.model.findById(serviceId);
-    console.log(service)
-    if (!service) {
-      throw new NotFoundException('Service not found');
-    }
-
-    const chatIndex = service.chats.findIndex(chat => chat._id === chatId);
-    console.log(chatIndex)
-    if (chatIndex === -1) {
-      throw new NotFoundException('Chat message not found');
-    }
-
-    service.chats[chatIndex].respuesta = chatDTO.respuesta || service.chats[chatIndex].respuesta;
-    service.chats[chatIndex].prestadorServicio = chatDTO.prestadorServicio || service.chats[chatIndex].prestadorServicio;
-    service.chats[chatIndex].fecha = new Date();
-
-    await service.save();
-    return service.chats;
-  } catch (error) {
-    this.logger.error(`Error updating chat message: ${error.message}`);
-    throw error;
+async updateChat(serviceId: string, chatId: string, chatDTO: ChatDTO): Promise<IService> {
+  const service = await this.model.findById(serviceId);
+  if (!service) {
+    throw new NotFoundException(`Service with ID ${serviceId} not found`);
   }
+
+  const chatIndex = service.chats.findIndex(chat => chat._id.toString() === chatId);
+  if (chatIndex === -1) {
+    throw new NotFoundException(`Chat with ID ${chatId} not found`);
+  }
+
+  // Update the chat message
+  service.chats[chatIndex].mensajeU = chatDTO.mensajeU;
+  if (chatDTO.respuesta) {
+    service.chats[chatIndex].respuesta = chatDTO.respuesta;
+  }
+  service.chats[chatIndex].fecha = new Date();
+
+  await service.save();
+  return service;
 }
   
 }

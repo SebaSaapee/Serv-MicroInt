@@ -22,11 +22,10 @@ export class ReviewDTO {
     readonly fecha: Date;
 }
 export class ChatDTO{
-    readonly _id?:string;
     readonly userId:string;
-    readonly nombreUsuario: string;
+    readonly nombreUsuario?: string;
    
-    readonly mensajeU :string;
+    readonly mensajeU? :string;
     
     readonly prestadorServicio?: string;
    

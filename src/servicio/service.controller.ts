@@ -112,11 +112,17 @@ export class ServiceController {
         return this.serviceService.getChats(serviceId);
     }
 
-    @MessagePattern(ServicesMSG.RESPONDER_CHAT)
-    updatechat(@Payload() payload: { serviceId: string, chatId: string, chatDTO: ChatDTO}) {
-        console.log(payload)
-        return this.serviceService.updateChat(payload.serviceId, payload.chatId,payload.chatDTO);
+    @MessagePattern(ServicesMSG.UPDATE_CHAT)
+  async updateChat(@Payload() payload: { serviceId: string, chatId: string, chatDTO: ChatDTO }) {
+    const { serviceId, chatId, chatDTO } = payload;
+    try {
+      const updatedService = await this.serviceService.updateChat(serviceId, chatId, chatDTO);
+      return { message: 'Chat updated successfully', service: updatedService };
+    } catch (error) {
+      this.logger.error(`Error updating chat: ${error.message}`);
+      throw error;
     }
+  }
 
 }
 

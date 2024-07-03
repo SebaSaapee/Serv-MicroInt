@@ -13,7 +13,7 @@ const ChatSchema = new mongoose.Schema(
     _id: {type :String},
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     nombreUsuario: { type: String, required: true},
-    mensajeU:{ type: String, required: true},
+    mensajeU:{ type: String,},
     prestadorServicio: { type: String },
     respuesta: { type: String},
     fecha: { type: Date, default: Date.now }
