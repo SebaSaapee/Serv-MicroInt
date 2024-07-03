@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post, Put } from '@nestjs/common';
 import { ServiceService } from './service.service';
-import { ReviewDTO, ServiceDTO } from './dto/service.dto';
+import { ChatDTO, ReviewDTO, ServiceDTO } from './dto/service.dto';
 import { ServicesMSG } from 'src/common/constants';
 import {MessagePattern, Payload} from '@nestjs/microservices'
 
@@ -87,6 +87,37 @@ export class ServiceController {
     findByUser(@Payload() userId: string) {
         return this.serviceService.findByUser(userId);
     }
+
+
+    @MessagePattern(ServicesMSG.GET_REVIEWS)
+     getReviews(@Payload() serviceId: string) {
+        return this.serviceService.getReviews(serviceId);
+    }
+
+    @MessagePattern(ServicesMSG.ADD_CHAT_MESSAGE)
+    async addChat(@Payload() payload: { serviceId: string, chatDTO: ChatDTO , userId:string}) {
+        
+        const { serviceId, chatDTO , userId } = payload;
+        console.log(payload)
+        try {
+            const updatedService = await this.serviceService.addChat(serviceId, chatDTO,userId);
+            return { message: 'message added successfully', service: updatedService };
+        } catch (error) {
+            this.logger.error(`Error adding chat: ${error.message}`);
+            throw error; // Propagate the error to handle it properly
+        }
+    }
+    @MessagePattern(ServicesMSG.GET_CHATS)
+     getChats(@Payload() serviceId: string) {
+        return this.serviceService.getChats(serviceId);
+    }
+
+    @MessagePattern(ServicesMSG.RESPONDER_CHAT)
+    updatechat(@Payload() payload: { serviceId: string, chatId: string, chatDTO: ChatDTO}) {
+        console.log(payload)
+        return this.serviceService.updateChat(payload.serviceId, payload.chatId,payload.chatDTO);
+    }
+
 }
 
 

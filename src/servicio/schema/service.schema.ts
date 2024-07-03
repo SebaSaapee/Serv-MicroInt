@@ -8,6 +8,17 @@ const ReviewSchema = new mongoose.Schema(
     fecha: { type: Date, default: Date.now }
   }
 );
+const ChatSchema = new mongoose.Schema(
+  {
+    _id: {type :String},
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    nombreUsuario: { type: String, required: true},
+    mensajeU:{ type: String, required: true},
+    prestadorServicio: { type: String },
+    respuesta: { type: String},
+    fecha: { type: Date, default: Date.now }
+  }
+);
 
 export const ServiceSchema = new mongoose.Schema(
   {
@@ -19,7 +30,8 @@ export const ServiceSchema = new mongoose.Schema(
     rating: { type: Number, default: 0  },
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     contadorSolicitudes: { type: Number, default: 0 },
-    reviews: [ReviewSchema] // Campo para almacenar las reviews
+    reviews: [ReviewSchema],
+    chats: [ChatSchema]// Campo para almacenar las reviews
   },
   { timestamps: true }
 );

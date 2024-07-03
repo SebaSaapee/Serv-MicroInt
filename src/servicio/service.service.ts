@@ -2,7 +2,7 @@ import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { POSTULACION, SERVICE, USER} from 'src/common/models/models';
-import { ReviewDTO, ServiceDTO } from './dto/service.dto';
+import { ChatDTO, ReviewDTO, ServiceDTO } from './dto/service.dto';
 import { IService } from 'src/common/interface/services.interface';
 
 import { IUser } from 'src/common/interface/user.interface';
@@ -11,6 +11,7 @@ import { IPostulacion } from 'src/common/interface/postulacion.interface';
 
 @Injectable()
 export class ServiceService {
+  logger: any;
 
     constructor(@InjectModel(SERVICE.name) private readonly model:Model<IService>,
     @InjectModel(USER.name) private readonly userModel: Model<IUser>,
@@ -217,11 +218,82 @@ private calculateAverageRating(reviews: any[]): number {
   return totalRatings / reviews.length;
 }
 
+async getReviews(serviceId: string): Promise<ReviewDTO[]> {
+  const service = await this.model.findById(serviceId).exec();
+  
+  if (!service) {
+      throw new NotFoundException(`Service with ID ${serviceId} not found`);
+  }
+
+  return service.reviews;
+}
 
 
 async findByUser(userId: string): Promise<IService[]> {
   return await this.model.find({ user_id: userId });
 }
 
+async addChat(serviceId: string, chatDTO: ChatDTO,userId: string,): Promise<any> {
+  try {
+    const user = await this.userModel.findById(userId);
+    console.log(user)
+      const service = await this.model.findById(serviceId).exec();
+      if (!service) {
+          throw new Error('Service not found');
+      }
+      console.log(user)
+      console.log(service)
+      const newChat = {
+        userId: user.id,
+        nombreUsuario: user.name ,
+        mensajeU: chatDTO.mensajeU,
+        fecha: new Date(),
+    };
+
+      service.chats.push(newChat);
+      await service.save();
+     return service
+  } catch (error) {
+      this.logger.error(`Error adding chat message: ${error.message}`);
+      throw error;
+  }
 }
+async getChats(serviceId: string): Promise<ChatDTO[]> {
+  const service = await this.model.findById(serviceId).exec();
+  
+  if (!service) {
+      throw new NotFoundException(`Service with ID ${serviceId} not found`);
+  }
+
+  return service.chats;
+}
+
+async updateChat(serviceId: string, chatId: string, chatDTO: ChatDTO): Promise<ChatDTO[]> {
+  try {
+    const service = await this.model.findById(serviceId);
+    console.log(service)
+    if (!service) {
+      throw new NotFoundException('Service not found');
+    }
+
+    const chatIndex = service.chats.findIndex(chat => chat._id === chatId);
+    console.log(chatIndex)
+    if (chatIndex === -1) {
+      throw new NotFoundException('Chat message not found');
+    }
+
+    service.chats[chatIndex].respuesta = chatDTO.respuesta || service.chats[chatIndex].respuesta;
+    service.chats[chatIndex].prestadorServicio = chatDTO.prestadorServicio || service.chats[chatIndex].prestadorServicio;
+    service.chats[chatIndex].fecha = new Date();
+
+    await service.save();
+    return service.chats;
+  } catch (error) {
+    this.logger.error(`Error updating chat message: ${error.message}`);
+    throw error;
+  }
+}
+  
+}
+
 
