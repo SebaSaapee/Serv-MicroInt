@@ -10,7 +10,7 @@ const ReviewSchema = new mongoose.Schema(
 );
 const ChatSchema = new mongoose.Schema(
   {
-    _id: {type :String},
+    
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     nombreUsuario: { type: String, required: true},
     mensajeU:{ type: String,},

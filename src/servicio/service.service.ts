@@ -280,9 +280,13 @@ async updateChat(serviceId: string, chatId: string, chatDTO: ChatDTO): Promise<I
 
   // Update the chat message
   service.chats[chatIndex].mensajeU = chatDTO.mensajeU;
+  if(chatDTO.prestadorServicio){
+    service.chats[chatIndex].prestadorServicio = chatDTO.prestadorServicio;
+  }
   if (chatDTO.respuesta) {
     service.chats[chatIndex].respuesta = chatDTO.respuesta;
   }
+  
   service.chats[chatIndex].fecha = new Date();
 
   await service.save();
